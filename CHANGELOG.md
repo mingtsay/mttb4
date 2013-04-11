@@ -3,9 +3,9 @@ Change Log
 ----------
 
 - v4.1:
--* change url prase function to object
--* add feature: links are clickable
+    1. change url prase function to object
+    1. add feature: links are clickable
 
 - v4.0:
--* initial release
+    1. initial release
 

@@ -2,7 +2,7 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <PublishUrlHistory>C:\Users\Ming\Documents\Visual Studio 2012\Projects\mttb4\release\|ftp://mt.rmstudio.tw/httproot/rmstudio.tw/mt/www/mttb4/|發行\</PublishUrlHistory>
-    <InstallUrlHistory>http://mt.rmstudio.tw/mttb4/</InstallUrlHistory>
+    <InstallUrlHistory>http://projects.mt.rmstudio.tw/mttb4/|http://mt.rmstudio.tw/mttb4/</InstallUrlHistory>
     <SupportUrlHistory />
     <UpdateUrlHistory />
     <BootstrapperUrlHistory />

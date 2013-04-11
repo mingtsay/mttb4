@@ -23,7 +23,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <InstallUrl>http://mt.rmstudio.tw/mttb4/</InstallUrl>
+    <InstallUrl>http://projects.mt.rmstudio.tw/mttb4/</InstallUrl>
     <SupportUrl>http://mt.rmstudio.tw/mttb4/support</SupportUrl>
     <ErrorReportUrl>http://mt.rmstudio.tw/mttb4/error</ErrorReportUrl>
     <ProductName>mt%27s Text Browser 4</ProductName>
@@ -33,7 +33,7 @@
     <WebPage>index.html</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
     <ApplicationRevision>1</ApplicationRevision>
-    <ApplicationVersion>4.0.0.%2a</ApplicationVersion>
+    <ApplicationVersion>4.1.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>

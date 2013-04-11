@@ -47,6 +47,7 @@
             this.txtData.Size = new System.Drawing.Size(302, 88);
             this.txtData.TabIndex = 2;
             this.txtData.Text = "";
+            this.txtData.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.txtData_LinkClicked);
             // 
             // btnNew
             // 
@@ -133,7 +134,7 @@
             this.Controls.Add(this.txtURL);
             this.Controls.Add(this.labUserAgent);
             this.Name = "Form1";
-            this.Text = "mt\'s Text Browser 4.0";
+            this.Text = "mt\'s Text Browser 4.1";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Shown += new System.EventHandler(this.Form1_Shown);
             this.SizeChanged += new System.EventHandler(this.Form1_SizeChanged);

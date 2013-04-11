@@ -13,11 +13,110 @@ namespace mttb4
 {
     public partial class Form1 : Form
     {
-        public const string strUserAgent = "mtsBrowser/1.0 (mttb 4.0; mttb; Windows; TextMode; mtsBrowser)";
+        public const string strUserAgent = "mtsBrowser/1.0 (mttb 4.1; mttb; Windows; TextMode; mtsBrowser)";
         private ulong counter = 0;
         private bool isParent = false;
         private Form1 theParent = null;
         const string sp = "\r\n";
+
+        private class classURL
+        {
+            public string host;
+            public uint port;
+            public string path;
+            public string query;
+            public bool prased;
+
+            public classURL()
+            {
+                this.prased = false;
+            }
+
+            public classURL(string sURL)
+            {
+                this.praseURL(sURL);
+            }
+
+            public override string ToString()
+            {
+                return this.host + (this.port == 80? "": ":" + this.port.ToString()) + (this.path == ""? "": this.path) + this.query;
+            }
+
+            public bool praseURL(string sURL)
+            {
+                return this.prased = this.getUrl(sURL, out this.host, out this.port, out this.path, out this.query);
+            }
+            
+            private bool isInStr(string sString, string sNeedle)
+            {
+                int i;
+
+                for (i = 0; i <= sString.Length - sNeedle.Length; ++i)
+                {
+                    if (sString.Substring(i, sNeedle.Length) == sNeedle)
+                        return true;
+                }
+                return false;
+            }
+
+            private enum mBeforeAfter { Before, After };
+            private string getStr(string sString, string sNeedle, mBeforeAfter iBeforeAfter)
+            {
+                string[] tmp;
+                try
+                {
+                    tmp = sString.Split(new string[1] { sNeedle }, 2, StringSplitOptions.None);
+                    if (iBeforeAfter == mBeforeAfter.Before) return tmp[0];
+                    else return tmp[1];
+                }
+                catch (Exception e)
+                {
+                    return sString;
+                }
+            }
+
+            private bool getUrl(string sUrl, out string sHost, out uint iPort, out string sPath, out string sQuery)
+            {
+                sHost = "";
+                iPort = 80;
+                sPath = "/";
+                sQuery = "";
+
+                try
+                {
+                    sHost = sUrl;
+
+                    if (sUrl.Length > 6 && sUrl.Substring(0, 7) == "http://")
+                        sHost = sUrl.Substring(7);
+                    else if (sUrl.Length > 4 && sUrl.Substring(0, 5) == "http:")
+                        sHost = sUrl.Substring(5);
+
+                    if (isInStr(sHost, ":"))
+                    {
+                        iPort = Convert.ToUInt32(getStr(sHost, ":", mBeforeAfter.After));
+                        if (iPort > 65535) return false;
+                    }
+
+                    if (isInStr(sHost, "/"))
+                        sPath = "/" + getStr(sHost, "/", mBeforeAfter.After);
+
+                    if (isInStr(sPath, "?"))
+                    {
+                        sQuery = "?" + getStr(sPath, "?", mBeforeAfter.After);
+                        sPath = getStr(sPath, "?", mBeforeAfter.Before);
+                    }
+
+                    if (isInStr(sHost, ":")) sHost = getStr(sHost, ":", mBeforeAfter.Before);
+                    if (isInStr(sHost, "/")) sHost = getStr(sHost, "/", mBeforeAfter.Before);
+
+                    return true;
+                }
+                catch (Exception e)
+                {
+                    return false;
+                }
+            }
+        }
 
         public Form1()
         {
@@ -87,10 +186,7 @@ namespace mttb4
         {
             string strURL = this.txtURL.Text;
             string request = "";
-            string host = "localhost";
-            uint port = 80;
-            string path = "/";
-            string query = "";
+            classURL goURL = new classURL(strURL);
 
             pbar.Value = pbar.Maximum;
             pbar.Refresh();
@@ -98,10 +194,10 @@ namespace mttb4
             pbar.Value = 0;
             pbar.Refresh();
 
-            if (getUrl(strURL, out host, out port, out path, out query))
+            if (goURL.prased)
             {
-                request += "GET" + " " + path + query + " HTTP/1.1" + sp;
-                request += "Host: " + host + sp;
+                request += "GET" + " " + goURL.path + goURL.query + " HTTP/1.1" + sp;
+                request += "Host: " + goURL.host + sp;
                 request += "User-Agent: " + Form1.strUserAgent + sp;
                 request += "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" + sp;
                 if (CultureInfo.CurrentCulture.TwoLetterISOLanguageName == "tw")
@@ -121,7 +217,7 @@ namespace mttb4
 
                 pbar.Style = ProgressBarStyle.Marquee;
 
-                ws.Connect(host, port);
+                ws.Connect(goURL.host, goURL.port);
             }
             else
             {
@@ -132,76 +228,6 @@ namespace mttb4
         private void btnGo_Click(object sender, EventArgs e)
         {
             doGo();
-        }
-
-        private bool isInStr(string sString, string sNeedle)
-        {
-            int i;
-
-            for(i = 0; i <= sString.Length - sNeedle.Length; ++i)
-            {
-                if(sString.Substring(i, sNeedle.Length) == sNeedle)
-                    return true;
-            }
-            return false;
-        }
-
-        private enum mBeforeAfter { Before, After };
-        private string getStr(string sString, string sNeedle, mBeforeAfter iBeforeAfter)
-        {
-            string[] tmp;
-            try
-            {
-                tmp = sString.Split(new string[1] { sNeedle }, 2, StringSplitOptions.None);
-                if (iBeforeAfter == mBeforeAfter.Before) return tmp[0];
-                else return tmp[1];
-            }
-            catch (Exception e)
-            {
-                return sString;
-            }
-        }
-
-        private bool getUrl(string sUrl, out string sHost, out uint iPort, out string sPath, out string sQuery)
-        {
-            sHost = "";
-            iPort = 80;
-            sPath = "/";
-            sQuery = "";
-
-            try
-            {
-                sHost = sUrl;
-
-                if (sUrl.Length > 6 && sUrl.Substring(0, 7) == "http://")
-                    sHost = sUrl.Substring(7);
-                else if (sUrl.Length > 4 && sUrl.Substring(0, 5) == "http:")
-                    sHost = sUrl.Substring(5);
-
-                if (isInStr(sHost, ":"))
-                {
-                    iPort = Convert.ToUInt32(getStr(sHost, ":", mBeforeAfter.After));
-                    if (iPort > 65535) return false;
-                }
-
-                if (isInStr(sHost, "/"))
-                    sPath = "/" + getStr(sHost, "/", mBeforeAfter.After);
-
-                if (isInStr(sPath, "?"))
-                {
-                    sQuery = "?" + getStr(sPath, "?", mBeforeAfter.After);
-                    sPath = getStr(sPath, "?", mBeforeAfter.Before);
-                }
-                
-                if (isInStr(sHost, ":")) sHost = getStr(sHost, ":", mBeforeAfter.Before);
-                if (isInStr(sHost, "/")) sHost = getStr(sHost, "/", mBeforeAfter.Before);
-
-                return true;
-            }
-            catch (Exception e)
-            {
-                return false;
-            }
         }
 
         private void setStatus(int statusCode, string errDescription = "")
@@ -343,6 +369,16 @@ namespace mttb4
         private void Form1_SizeChanged(object sender, EventArgs e)
         {
             doResize();
+        }
+
+        private void txtData_LinkClicked(object sender, LinkClickedEventArgs e)
+        {
+            classURL linkURL = new classURL();
+            if (linkURL.praseURL(e.LinkText))
+            {
+                txtURL.Text = linkURL.ToString();
+                doGo();
+            }
         }
     }
 }
